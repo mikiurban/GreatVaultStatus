@@ -1,4 +1,4 @@
-## Interface: 110700
+## Interface: 110100
 ## Title: Great Vault Status
 ## Version: v1.1.5
 ## Author: Ludius of Caelestrasz-US
