@@ -51,7 +51,7 @@ local SECOND_REWARD_COLUMN = 2
 local THIRD_REWARD_COLUMN = 3
 
 local sortColumn = COL_CHARACTER
-local sortAscending = true 
+local sortAscending = true
 local showSingleRealm = true
 
 
@@ -103,7 +103,7 @@ local function encounterSorter(entry1, entry2)
 	end
 end
 
--- search thru a list for a value.  really, lua doesn't have table.find() 
+-- search thru a list for a value.  really, lua doesn't have table.find()
 local function locate( table, value )
 	for i = 1, #table do
 			if table[i] == value then return true end
@@ -218,7 +218,7 @@ local function GetWeeklyQuestResetTime()
 	local nextDailyReset = GetQuestResetTime()
 	local utc = date("!*t", now + nextDailyReset)
 	local reset = regionDayOffset[region][utc.wday] * 86400 + now + nextDailyReset
-	
+
 	return reset
 end
 
@@ -242,7 +242,7 @@ function SortCharacters(a, b)
 			result = a.name > b.name
 		end
 	elseif sortColumn == COL_ITEMLEVEL then
-		if sortAscending then 
+		if sortAscending then
 			result = a.averageItemLevel < b.averageItemLevel
 		else
 			result = a.averageItemLevel > b.averageItemLevel
@@ -267,23 +267,23 @@ local function ShowCharacterActivities(tooltip, line, columnStart, activities, l
 	for _, activity in ipairs(activities) do
 		local leftPad = 3
 		local rightPad = 3
-		local difficulty
+		local difficultyName
 
 		if activity.progress >= activity.threshold and activityThisWeek then
 			if activity.type == Enum.WeeklyRewardChestThresholdType.Activities then
 				local difficultyId = C_WeeklyRewards.GetDifficultyIDForActivityTier(activity.activityTierID)
 				if difficultyId == DifficultyUtil.ID.DungeonHeroic or activity.level == 0 then
-					difficulty = DifficultyUtil.GetDifficultyName(difficultyId)
+					difficultyName = DifficultyUtil.GetDifficultyName(difficultyId)
 				else
-					difficulty = DifficultyUtil.GetDifficultyName(difficultyId)..activity.level
+					difficultyName = DifficultyUtil.GetDifficultyName(difficultyId)..activity.level
 				end
 			elseif activity.type == Enum.WeeklyRewardChestThresholdType.World then
-				difficulty = string.format(GREAT_VAULT_WORLD_TIER, activity.level)
+				difficultyName = string.format(GREAT_VAULT_WORLD_TIER, activity.level)
 			elseif activity.type == Enum.WeeklyRewardChestThresholdType.Raid then
-				difficulty = DifficultyUtil.GetDifficultyName(activity.level)
+				difficultyName = DifficultyUtil.GetDifficultyName(activity.level)
 			end
 
-			status = GREEN_FONT_COLOR_CODE .. difficulty .. FONT_COLOR_CODE_CLOSE			
+			status = GREEN_FONT_COLOR_CODE .. difficultyName .. FONT_COLOR_CODE_CLOSE
 		else
 			local progress = 0
 
@@ -294,8 +294,8 @@ local function ShowCharacterActivities(tooltip, line, columnStart, activities, l
 			status = GRAY_FONT_COLOR_CODE .. progress .. '/' .. activity.threshold .. FONT_COLOR_CODE_CLOSE
 		end
 
-		if column == columnStart then 
-			leftPad = leftPad + leftPadding 
+		if column == columnStart then
+			leftPad = leftPad + leftPadding
 		elseif column == columnStart + 2 then
 			rightPad = rightPad + rightPadding
 		end
@@ -304,7 +304,7 @@ local function ShowCharacterActivities(tooltip, line, columnStart, activities, l
 
 		tooltip:SetCellScript(line, column, "OnEnter", function(self)
 			local info = activity
-			GreatVaultStatus:ShowSubTooltip(self, info)
+			GreatVaultStatus:ShowSubTooltip(info)
 		end)
 
 		tooltip:SetCellScript(line, column, "OnLeave", HideSubTooltip)
@@ -334,17 +334,17 @@ local function ShowPreviewRaidReward(tooltip, activity)
 
 	--- Less than threshold means no reward yet
 	if activity.progress < activity.threshold then
-		if activity.index == FIRST_REWARD_COLUMN then 
+		if activity.index == FIRST_REWARD_COLUMN then
 			-- GREAT_VAULT_REWARDS_RAID_INCOMPLETE -- Defeat %d %s |4Boss:Bosses; this week to unlock this reward.|n|nThe item level of this reward will be based on the difficulty of the raid.
 			tooltip:AddLine(YELLOW_FONT_COLOR_CODE..string.format(GREAT_VAULT_REWARDS_RAID_INCOMPLETE, activity.threshold - activity.progress, raidName)..FONT_COLOR_CODE_CLOSE)
 		else
 			-- GREAT_VAULT_REWARDS_RAID_INPROGRESS - Defeat %d more %s |4Boss:Bosses; this week to unlock this reward.|n|nThe item level of this reward will be based on the difficulty of the raid.
 			tooltip:AddLine(YELLOW_FONT_COLOR_CODE..string.format(GREAT_VAULT_REWARDS_RAID_INPROGRESS, activity.threshold - activity.progress, raidName)..FONT_COLOR_CODE_CLOSE)
 		end
-	elseif not itemLevel then 
+	elseif not itemLevel then
 		-- for some reason we may not have an item level
 		tooltip:AddLine(RED_FONT_COLOR_CODE..RETRIEVING_ITEM_INFO..FONT_COLOR_CODE_CLOSE)
-	else 
+	else
 		-- ready to display item level, upgrade item level, and raid bosses killed
 		tooltip:AddLine(YELLOW_FONT_COLOR_CODE..string.format(WEEKLY_REWARDS_ITEM_LEVEL_RAID, itemLevel, currentDifficultyName)..FONT_COLOR_CODE_CLOSE)
 		tooltip:AddLine(" ")
@@ -392,7 +392,7 @@ local function ShowPreviewRaidReward(tooltip, activity)
 
 				tooltip:AddLine(" ")
 				tooltip:AddLine(raidName.." "..L["Boss List"])
-			
+
 				for _, encounter in pairs(encounters) do
 					if encounter.instanceID == instanceID then
 						local boss = EJ_GetEncounterInfo(encounter.encounterID);
@@ -421,11 +421,11 @@ local function ShowPreviewDungeonReward(tooltip, activity)
 	-- If the threshold has not been met, they need finish up
 	if activity.progress < activity.threshold then
 		tooltip:AddLine(" ")
-		if activity.index == FIRST_REWARD_COLUMN then 
+		if activity.index == FIRST_REWARD_COLUMN then
 			tooltip:AddLine(YELLOW_FONT_COLOR_CODE..GREAT_VAULT_REWARDS_MYTHIC_INCOMPLETE..FONT_COLOR_CODE_CLOSE)
-		elseif activity.index == SECOND_REWARD_COLUMN then 
+		elseif activity.index == SECOND_REWARD_COLUMN then
 			tooltip:AddLine(YELLOW_FONT_COLOR_CODE..string.format(GREAT_VAULT_REWARDS_MYTHIC_COMPLETED_FIRST, activity.threshold - activity.progress)..FONT_COLOR_CODE_CLOSE)
-		elseif activity.index == THIRD_REWARD_COLUMN then 
+		elseif activity.index == THIRD_REWARD_COLUMN then
 			tooltip:AddLine(YELLOW_FONT_COLOR_CODE..string.format(GREAT_VAULT_REWARDS_MYTHIC_COMPLETED_SECOND, activity.threshold - activity.progress)..FONT_COLOR_CODE_CLOSE)
 		end
 
@@ -433,25 +433,21 @@ local function ShowPreviewDungeonReward(tooltip, activity)
 	elseif not itemLevel then
 		-- for some reason we may not have an item level
 		tooltip:AddLine(RED_FONT_COLOR_CODE..RETRIEVING_ITEM_INFO..FONT_COLOR_CODE_CLOSE)
-	else		
+	else
 		local _, _, nextLevel, nextItemLevel = C_WeeklyRewards.GetNextActivitiesIncrease(activity.activityTierID, activity.level)
 		if difficultyId == DifficultyUtil.ID.DungeonHeroic then -- Do we have a heroic reward?
-			tooltip:AddLine(YELLOW_FONT_COLOR_CODE..string.format(WEEKLY_REWARDS_ITEM_LEVEL_HEROIC, itemLevel, activity.level)..FONT_COLOR_CODE_CLOSE)
+			tooltip:AddLine(YELLOW_FONT_COLOR_CODE..string.format(WEEKLY_REWARDS_ITEM_LEVEL_HEROIC, itemLevel)..FONT_COLOR_CODE_CLOSE)
 			tooltip:AddLine(" ")
 			if nextItemLevel then
-				tooltip:AddLine(GREEN_FONT_COLOR_CODE..string.format(WEEKLY_REWARDS_IMPROVE_ITEM_LEVEL, nextItemLevel)..FONT_COLOR_CODE_CLOSE)				 
+				tooltip:AddLine(GREEN_FONT_COLOR_CODE..string.format(WEEKLY_REWARDS_IMPROVE_ITEM_LEVEL, nextItemLevel)..FONT_COLOR_CODE_CLOSE)
 				tooltip:AddLine(string.format(GREAT_VAULT_REWARDS_CURRENT_LEVEL_HEROIC, activity.threshold))
-			else
-				tooltip:AddLine(GREEN_FONT_COLOR_CODE..WEEKLY_REWARDS_MAXED_REWARD..FONT_COLOR_CODE_CLOSE)
 			end
 		else -- must be Mythic
 			tooltip:AddLine(YELLOW_FONT_COLOR_CODE..string.format(WEEKLY_REWARDS_ITEM_LEVEL_MYTHIC, itemLevel, activity.level)..FONT_COLOR_CODE_CLOSE)
 			tooltip:AddLine(" ")
 			if itemLevel then
-				tooltip:AddLine(GREEN_FONT_COLOR_CODE..string.format(WEEKLY_REWARDS_IMPROVE_ITEM_LEVEL, nextItemLevel)..FONT_COLOR_CODE_CLOSE)				 
+				tooltip:AddLine(GREEN_FONT_COLOR_CODE..string.format(WEEKLY_REWARDS_IMPROVE_ITEM_LEVEL, nextItemLevel)..FONT_COLOR_CODE_CLOSE)
 				tooltip:AddLine(string.format(WEEKLY_REWARDS_COMPLETE_MYTHIC_SHORT, nextLevel))
-			else
-				tooltip:AddLine(GREEN_FONT_COLOR_CODE..WEEKLY_REWARDS_MAXED_REWARD..FONT_COLOR_CODE_CLOSE)
 			end
 		end
 	end
@@ -464,11 +460,11 @@ local function ShowPreviewWorldReward(tooltip, activity)
 	local itemLevel = activity.currentItemLevel
   --- No reward yet, need more encounters
 	if activity.progress < activity.threshold then
-		if activity.index == FIRST_REWARD_COLUMN then 
+		if activity.index == FIRST_REWARD_COLUMN then
 			tooltip:AddLine(YELLOW_FONT_COLOR_CODE..string.format(GREAT_VAULT_REWARDS_WORLD_INCOMPLETE, activity.threshold - activity.progress)..FONT_COLOR_CODE_CLOSE)
-		elseif activity.index == SECOND_REWARD_COLUMN then 
+		elseif activity.index == SECOND_REWARD_COLUMN then
 			tooltip:AddLine(YELLOW_FONT_COLOR_CODE..string.format(GREAT_VAULT_REWARDS_WORLD_COMPLETED_FIRST, activity.threshold - activity.progress)..FONT_COLOR_CODE_CLOSE)
-		elseif activity.index == THIRD_REWARD_COLUMN then 
+		elseif activity.index == THIRD_REWARD_COLUMN then
 			tooltip:AddLine(YELLOW_FONT_COLOR_CODE..string.format(GREAT_VAULT_REWARDS_WORLD_COMPLETED_SECOND, activity.threshold - activity.progress)..FONT_COLOR_CODE_CLOSE)
 		end
 	elseif not itemLevel then
@@ -481,7 +477,7 @@ local function ShowPreviewWorldReward(tooltip, activity)
 		local _, _, nextLevel, upgradeItemLevel = C_WeeklyRewards.GetNextActivitiesIncrease(activity.activityTierID, activity.level)
 		if upgradeItemLevel then
 			tooltip:AddLine(GREEN_FONT_COLOR_CODE..string.format(WEEKLY_REWARDS_IMPROVE_ITEM_LEVEL, upgradeItemLevel)..FONT_COLOR_CODE_CLOSE)
-			
+
 			tooltip:AddLine(string.format(WEEKLY_REWARDS_COMPLETE_WORLD, nextLevel))
 		end
 	end
@@ -490,7 +486,7 @@ end
 --##################################################################################################
 --##################################################################################################
 -- This function creates the tooltop for any mouseover cell
-local function ShowCurrentReward(activity)
+function GreatVaultStatus:ShowSubTooltip(activity)
 	local tooltip = GreatVaultStatus.subTooltip
 	local itemLevel = activity.currentItemLevel
 	local upgradeItemLevel = activity.upgradeItemLevel
@@ -506,11 +502,11 @@ local function ShowCurrentReward(activity)
 	tooltip:SetClampedToScreen(true)
 	tooltip:SetPoint("TOP", GreatVaultStatus.tooltip, "TOP", 30, 0)
 	tooltip:SetPoint("RIGHT", GreatVaultStatus.tooltip, "LEFT", -20, 0)
-	
+
 	if activity.progress < activity.threshold then
-		tooltip:AddLine(WEEKLY_REWARDS_UNLOCK_REWARD) 
+		tooltip:AddLine(WEEKLY_REWARDS_UNLOCK_REWARD)
 	else
-		tooltip:AddLine(WEEKLY_REWARDS_CURRENT_REWARD) 
+		tooltip:AddLine(WEEKLY_REWARDS_CURRENT_REWARD)
 	end
 
 	if activity.type == Enum.WeeklyRewardChestThresholdType.Raid then
@@ -525,12 +521,8 @@ local function ShowCurrentReward(activity)
 		-- WEEKLY_REWARDS_MAXED_REWARD = "Reward at Highest Item Level"
 		tooltip:AddLine(GREEN_FONT_COLOR_CODE..WEEKLY_REWARDS_MAXED_REWARD..FONT_COLOR_CODE_CLOSE)
 	end
-	
-	tooltip:Show()
-end
 
-function GreatVaultStatus:ShowSubTooltip(cell, info)
-	ShowCurrentReward(info)
+	tooltip:Show()
 end
 
 local function HasCompletedActivities(status)
@@ -545,7 +537,7 @@ local function HasCompletedActivities(status)
 					completed = true
 					break
 				end
-			end	
+			end
 		end
 	end
 
@@ -576,7 +568,7 @@ local function ShowCharacter(tooltip, name, info)
 		tooltip:SetCell(line, COL_ITEMLEVEL, string.format("%.1f", info.averageItemLevel), "RIGHT")
 	end
 
-	if activities then 
+	if activities then
 		ShowCharacterActivities(tooltip, line, COL_RAIDS, activities[Enum.WeeklyRewardChestThresholdType.Raid], lastUpdated, 0, 10)
 		ShowCharacterActivities(tooltip, line, COL_DUNGEONS, activities[Enum.WeeklyRewardChestThresholdType.Activities], lastUpdated, 10, 10)
 		ShowCharacterActivities(tooltip, line, COL_WORLD, activities[Enum.WeeklyRewardChestThresholdType.World], lastUpdated, 10, 0)
@@ -634,11 +626,11 @@ local function ShowRealm(tooltip, name, info)
 		tooltip:SetCellTextColor(line, 2, yellow.r, yellow.g, yellow.b)
 	end
 
-	if not collapsed or showSingleRealm then	
+	if not collapsed or showSingleRealm then
 		for key, value in pairs(info.characters) do
 			table.insert(characters, value);
 		end
-	
+
 		table.sort(characters, SortCharacters)
 
 		for characterName, characterInfo in pairs(characters) do
@@ -656,7 +648,7 @@ end
 
 function GreatVaultStatus:ShowToolTip()
 	local tooltip = GreatVaultStatus.tooltip
-	local columns = 13	
+	local columns = 13
 
 	self:SaveCharacterInfo()
 
@@ -713,7 +705,7 @@ local function GetActivities(activityType)
 	table.sort(activities, function(a,b) return a.index < b.index end)
 
 	for _,activity in pairs(activities) do
-		if activity.progress >= activity.threshold then			
+		if activity.progress >= activity.threshold then
 			local encounterInfo = C_WeeklyRewards.GetActivityEncounterInfo(activityType, activity.index);
 			local currentLink, upgradeLink = C_WeeklyRewards.GetExampleRewardItemHyperlinks(activity.id);
 
@@ -749,7 +741,7 @@ local function UpdateStatusForCharacter(currentStatus)
 end
 
 function GreatVaultStatus:SaveCharacterInfo(info)
-	if UnitLevel("player") < 60 then
+	if UnitLevel("player") < 80 then
 		return
 	end
 
