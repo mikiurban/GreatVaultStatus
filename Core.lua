@@ -791,14 +791,21 @@ function GreatVaultStatus:WEEKLY_REWARDS_ITEM_CHANGED(event)
 	self:SaveCharacterInfo()
 end
 
+function GreatVaultStatus:PLAYER_INTERACTION_MANAGER_FRAME_HIDE(event, playerInteractionType)
+	-- self:Print(event)
+	if playerInteractionType == Enum.PlayerInteractionType.WeeklyRewards then
+		self:SaveCharacterInfo()
+	end
+end
+
 function GreatVaultStatus:OnEnable()
 	self:RegisterEvent("PLAYER_ENTERING_WORLD")
 	self:RegisterEvent("WEEKLY_REWARDS_UPDATE")
-	self:RegisterEvent("WEEKLY_REWARDS_ITEM_CHANGED")
+	self:RegisterEvent("PLAYER_INTERACTION_MANAGER_FRAME_HIDE")
 end
 
 function GreatVaultStatus:OnDisable()
 	self:UnregisterEvent("PLAYER_ENTERING_WORLD")
 	self:UnregisterEvent("WEEKLY_REWARDS_UPDATE")
-	self:UnregisterEvent("WEEKLY_REWARDS_ITEM_CHANGED")
+	self:UnregisterEvent("PLAYER_INTERACTION_MANAGER_FRAME_HIDE")
 end
